@@ -1,7 +1,7 @@
 function computerPlay() {
-    let rand = Math.floor((Math.random() * (1, 4)) + 1); 
+    let rand = Math.floor((Math.random() * (1, 4)) + 1);
     let computerSelection;
-    
+
     switch (rand) {
         case 1:
             computerSelection = "rock";
@@ -16,69 +16,103 @@ function computerPlay() {
     return computerSelection;
 }
 
-function playRound(playerSelection, computerSelection) {
-    let score = 0;
+function playRound(playerSelection, scores) {
+    let computerSelection = computerPlay();
 
     if (playerSelection == computerSelection) {
-        console.log("Both picked " + playerSelection + ", nobody scores.");
-    }
-    
-    if (playerSelection == "rock") {
-        if (computerSelection == "paper") {
-            console.log("You picked rock, computer picked paper - you score 1 point!");
-            score++;
-        }
-        else if (computerSelection == "scissors") {
-            console.log("You picked rock, but computer picked scissors - computer score 1 point.");
-            score--;
-        }
+        playMessage.innerHTML = "Both picked " + playerSelection + ", nobody scores.";
     }
 
-    if (playerSelection == "paper") {
-        if (computerSelection == "rock") {
-            console.log("You picked paper, computer picked rock - you score 1 point!");
-            score++;
-        }
-        else if (computerSelection == "scissors") {
-            console.log("You picked paper, but computer picked scissors - computer scores 1 point");
-            score--;
-        }
-    }
+    switch (playerSelection) {
+        case "rock":
+            if (computerSelection == "paper") {
+                playMessage.innerHTML = "You picked rock, computer picked paper - you score 1 point!";
+                scores[0] += 1;
+            }
+            else if (computerSelection == "scissors") {
+                playMessage.innerHTML = "You picked rock, but computer picked scissors - computer score 1 point.";
+                scores[1] += 1;
+            }
+            break;
 
-    if (playerSelection == "scissors") {
-        if (computerSelection == "paper") {
-            console.log("You picked scissors, computer picked paper - you score 1 point!");
-            score++;
-        }
-        else if (computerSelection == "rock"){
-            console.log("You picked scissors, but computer picked rock - computer scores 1 point");
-            score--;
-        }
-    }
+        case "paper":
+            if (computerSelection == "rock") {
+                playMessage.innerHTML = "You picked paper, computer picked rock - you score 1 point!";
+                scores[0] += 1;
+            }
+            else if (computerSelection == "scissors") {
+                playMessage.innerHTML = "You picked paper, but computer picked scissors - computer scores 1 point";
+                scores[1] += 1;
+            }
+            break;
 
-    return score;
+        case "scissors":
+            if (computerSelection == "paper") {
+                playMessage.innerHTML = "You picked scissors, computer picked paper - you score 1 point!";
+                scores[0] += 1;
+            }
+            else if (computerSelection == "rock") {
+                playMessage.innerHTML = "You picked scissors, but computer picked rock - computer scores 1 point";
+                scores[1] += 1;
+            }
+            break;
+
+        default:
+            message.innerHTML = "default";
+            break;
+    }
 }
 
-function game() {
-    let score = 0;
-    let computerSelection = computerPlay();
-    let playerSelection = prompt("Rock, paper or scissors?").toLowerCase();
+function printScores(){
+    scoreMessage.innerHTML = "Round " + rounds + ": Your score is " + scores[0] + ", computer's score is " + scores[1];
+}
 
-    for (let i = 0; i < 5; i++){
-        score += playRound(playerSelection, computerSelection);
-        playerSelection = prompt("rock, paper or scissors?").toLowerCase();
-        computerSelection = computerPlay();
-    }
+function reset(){
+    gameButtons.style.display = "block";
+    scoreMessage.innerHTML = " ";
+    playMessage.innerHTML = " ";
+    winnerMessage.innerHTML = " ";
+    newRound.style.display = "none";
+}
 
-    if (score > 0) {
-        console.log("You win the game!");
+function checkRounds(rounds) {
+    if (rounds > 5) {
+        if (scores[0] > scores[1]) {
+            winnerMessage.innerHTML = "You have played 5 rounds, and YOU are the winner!";
+        }
+        else if (scores[0] == scores[1]) {
+            winnerMessage.innerHTML = "You have played your 5 rounds and it's a tie! Nobody wins!";
+        }
+        else {
+            winnerMessage.innerHTML = "You have played 5 rounds, and COMPUTER is the winner!";
+        }
+        gameButtons.style.display = "none";
+        newRound.style.display = "block";
+        newRound.addEventListener("click", reset);
     } 
-    else if (score == 0) {
-        console.log("Nobody wins the game");
-    }
-    else if(score < 0) {
-        console.log("Computer wins the game");
-    }
 }
 
-game();
+function game(playerSelection) {
+    playRound(playerSelection, scores);
+    printScores();
+    rounds ++;
+    checkRounds(rounds);
+    if (rounds >= 6) {rounds = 1;}
+}
+
+let scores = [0,0];
+let rounds = 1;
+
+let rockButton = document.getElementById("rockButton");
+let paperButton = document.getElementById("paperButton");
+let scissorsButton = document.getElementById("scissorsButton");
+let playMessage = document.getElementById("playMessage");
+let scoreMessage = document.getElementById("scoreMessage");
+let winnerMessage = document.getElementById("winnerMessage");
+let gameButtons = document.getElementById("gameButtons");
+let newRound = document.getElementById("newRound");
+newRound.style.display = "none";
+
+rockButton.addEventListener('click', function () { game("rock"); });
+paperButton.addEventListener('click', function () { game("paper"); });
+scissorsButton.addEventListener('click', function () { game("scissors"); });
