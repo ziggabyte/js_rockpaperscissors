@@ -1,2 +1,2 @@
-# js_rockpaperscissors
+# Rock paper scissors
 Odin project javascript exercise
